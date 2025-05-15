@@ -16,10 +16,10 @@ const moduleRoutes = [
     path: "/auth",
     route: AuthRoutes,
   },
-  {
-    path: "/payments",
-    route: StripeRoutes,
-  },
+  // {
+  //   path: "/payments",
+  //   route: StripeRoutes,
+  // },
   {
     path: "/products",
     route: ProductRoutes,
