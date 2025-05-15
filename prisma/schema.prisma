@@ -141,21 +141,21 @@ model Notification {
 }
 
 
-model Payment {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  paymentId     String
-  offerId       String
-  senderId      String
-  receiverId    String
-  paymentAmount Float
-  platformFee   Float
-  paymentDate   DateTime      @default(now())
-  status        PaymentStatus @default(PENDING)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+// model Payment {
+//   id            String        @id @default(auto()) @map("_id") @db.ObjectId
+//   paymentId     String
+//   offerId       String
+//   senderId      String
+//   receiverId    String
+//   paymentAmount Float
+//   platformFee   Float
+//   paymentDate   DateTime      @default(now())
+//   status        PaymentStatus @default(PENDING)
+//   createdAt     DateTime      @default(now())
+//   updatedAt     DateTime      @updatedAt
 
-  @@map("payments")
-}
+//   @@map("payments")
+// }
 
 
 enum ProductStatus {
@@ -166,12 +166,12 @@ enum ProductStatus {
 }
 
 
-enum PaymentStatus {
-  PENDING
-  COMPLETED
-  REFUNDED
-  REQUIRES_CAPTURE
-}
+// enum PaymentStatus {
+//   PENDING
+//   COMPLETED
+//   REFUNDED
+//   REQUIRES_CAPTURE
+// }
 
 
 // model OfferDetails {
