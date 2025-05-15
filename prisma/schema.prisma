@@ -1,0 +1,191 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  firstName     String?
+  lastName      String?
+  fullName      String?
+  dob           DateTime?
+  email         String     @unique
+  phoneNumber   String?    
+  images        String[]
+  lat            Float?
+  lng            Float?
+  profileImage  String?
+  expirationOtp DateTime?
+  otp           Int?
+  password      String
+  role          UserRole   @default(Customer)
+  notification  Notification[]
+  isNotification Boolean   @default(true)
+  accountLink   String?
+  stripeAccountID String?
+  customerId    String?    @default("")
+  status        UserStatus @default(ACTIVE)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  // offersSent    OfferDetails[] @relation("SenderRelation")
+  // offersReceived OfferDetails[] @relation("ReceiverRelation")
+  isOnboarding  Boolean    @default(false)
+  emailVerified                 Boolean  @default(false)
+  emailVerificationToken        String?
+  otpExpiresAt  DateTime?
+
+  rejectedProducts RejectedProduct[]  
+  // Reverse relation field
+  Product CreateProduct[]  // Adding reverse relation
+
+  @@map("Users")
+}
+
+
+
+
+
+
+model CreateProduct {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  address         String?
+  location       String?
+
+  serviceType     String
+  perimeter       Int
+  area            Int
+  lat            Float
+  lng            Float
+  driveways       String[]
+  isCornerLot     Boolean?
+  extraFeet       Int?
+  isSteep         Boolean?
+  isPriority      Boolean?
+  images        String[]
+  completedImages String[]
+
+  basePrice       Int
+  additionsPrice  Int
+  totalPrice      Int
+
+
+  providerId      String
+  status         ProductStatus  @default(PENDING)
+
+  rejectedBy       RejectedProduct[]  
+
+  createdAt       DateTime @default(now())
+
+  userId          String   @db.ObjectId
+  user            User     @relation(fields: [userId], references: [id])
+   
+
+  @@map("CreateProduct")
+}
+
+
+
+model RejectedProduct {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+
+  productId   String   @db.ObjectId
+  providerId  String   @db.ObjectId
+  rejectedAt  DateTime @default(now())
+
+  product     CreateProduct @relation(fields: [productId], references: [id])
+  provider    User          @relation(fields: [providerId], references: [id])
+
+  @@map("RejectedProduct")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+enum UserRole {
+  Customer
+  Provider
+  Admin
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  BLOCKED
+}
+
+model Notification {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  title     String
+  body      String
+  data      String?
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@map("notifications")
+}
+
+
+model Payment {
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  paymentId     String
+  offerId       String
+  senderId      String
+  receiverId    String
+  paymentAmount Float
+  platformFee   Float
+  paymentDate   DateTime      @default(now())
+  status        PaymentStatus @default(PENDING)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@map("payments")
+}
+
+
+enum ProductStatus {
+  PENDING
+  ACCEPTED
+  COMPLETED
+  REJECTED
+}
+
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  REFUNDED
+  REQUIRES_CAPTURE
+}
+
+
+// model OfferDetails {
+//   id          String      @id @default(auto()) @map("_id") @db.ObjectId
+//   amount      Float
+//   status      OfferStatus
+//   description String?      @default("")
+//   senderId    String       @db.ObjectId
+//   receiverId  String       @db.ObjectId
+//   sender      User         @relation("SenderRelation", fields: [senderId], references: [id])
+//   receiver    User         @relation("ReceiverRelation", fields: [receiverId], references: [id])
+//   createdAt   DateTime     @default(now())
+//   updatedAt   DateTime     @updatedAt
+
+//   @@map("offerDetails")
+// }
+
